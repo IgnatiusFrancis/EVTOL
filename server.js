@@ -9,16 +9,23 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://evtol-task.onrender.com/"],
+  })
+);
 app.use(express.json());
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Max-Age", "1800");
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH"
+    "PUT, POST, GET, DELETE, PATCH, OPTIONS"
   );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
   next();
 });
 
