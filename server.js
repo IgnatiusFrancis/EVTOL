@@ -5,19 +5,22 @@ import { dbConnection } from "./DBConnection/DBConnect.js";
 import userRouter from "./routes/userRoute.js";
 import adminRouter from "./routes/adminRoute.js";
 import EvtolRouter from "./routes/evtolRoute.js";
-import { createServer } from "http";
-import { fileURLToPath } from "url";
-import path from "path";
 import dotenv from "dotenv";
 import cors from "cors";
 
 const app = express();
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://evtol-task.onrender.com/"],
-  })
-);
+app.use(cors());
 app.use(express.json());
+
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 dotenv.config();
 dbConnection();
