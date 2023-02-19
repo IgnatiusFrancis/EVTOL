@@ -10,11 +10,13 @@ import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
 import cors from "cors";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://evtol-jxgd.onrender.com/"],
+  })
+);
 app.use(express.json());
 
 dotenv.config();

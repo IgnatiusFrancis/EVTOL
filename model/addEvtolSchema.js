@@ -4,7 +4,22 @@ import mongoose from "mongoose";
 
 const rentEvtolSchema = new mongoose.Schema(
   {
-    serialNumber: { type: String, maxlength: 100 },
+    serialNumber: {
+      type: String,
+      unique: true,
+      default: function () {
+        let serialNumber = "";
+        const characters =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const charactersLength = characters.length;
+        for (let i = 0; i <= 100; i++) {
+          serialNumber += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+        return serialNumber;
+      },
+    },
     brand: {
       type: String,
       required: true,
@@ -22,10 +37,6 @@ const rentEvtolSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // price: {
-    //   type: String,
-    //   required: true,
-    // },
     fileName: {
       type: String,
       required: true,
@@ -44,7 +55,7 @@ const rentEvtolSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      required: true,
+      required: false,
       enum: [
         "IDLE",
         "LOADING",
@@ -57,7 +68,39 @@ const rentEvtolSchema = new mongoose.Schema(
       default: "IDLE",
     },
     weightLimit: { type: Number, required: true, max: 500 },
-    batteryCapacity: { type: Number, default: 100 },
+    batteryLevel: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 100,
+      default: 100,
+    },
+    medications: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: false,
+            match: /^[a-zA-Z0-9-_]+$/,
+          },
+          weight: {
+            type: Number,
+            required: false,
+            min: 0,
+          },
+          code: {
+            type: String,
+            required: false,
+            // match: /^[A-Z0-9_]+$/,
+          },
+          image: { type: String, required: false },
+          destination: {
+            type: String,
+            required: false,
+          },
+        },
+      ],
+    },
   },
   { timestamps: true }
 );

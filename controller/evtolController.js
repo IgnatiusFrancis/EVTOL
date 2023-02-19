@@ -2,35 +2,50 @@ import RentEvtol from "../model/addEvtolSchema.js";
 
 export const loadEvtol = async (req, res) => {
   try {
-    const { serialNumber, medications } = req.body;
-    RentEvtol.findOne({ serialNumber }).then((RentEvtol) => {
-      if (!RentEvtol) return res.status(400).json({ msg: "eVTOL not found" });
+    const { medications } = req.body;
+    console.log(medications);
 
-      if (RentEvtol.state === "LOADING")
-        return res.status(400).json({ msg: "eVTOL is already loading" });
+    RentEvtol.findOne({ serialNumber: req.params.serialNumber }).then(
+      (RentEvtol) => {
+        if (!RentEvtol) return res.status(400).json({ msg: "eVTOL not found" });
 
-      if (RentEvtol.batteryLevel < 25)
-        return res.status(400).json({ msg: "eVTOL battery level is too low" });
+        if (RentEvtol.state === "LOADING")
+          return res.status(400).json({ msg: "eVTOL is already loading" });
 
-      let totalWeight = 0;
-      medications.forEach((medication) => {
-        totalWeight += medication.weight;
-      });
+        const numMedications = medications.length;
 
-      if (totalWeight > RentEvtol.weightLimit)
-        return res
-          .status(400)
-          .json({ msg: "Total weight exceeds the eVTOL weight limit" });
+        const batteryLevelReductionPerMedication = 30;
+        const batteryLevelReduction =
+          numMedications * batteryLevelReductionPerMedication;
 
-      RentEvtol.state = "LOADING";
-      RentEvtol.medications = medications;
-      RentEvtol.save().then((updatedeVTOL) =>
-        res.json({
-          status: "Success",
-          updatedeVTOL,
-        })
-      );
-    });
+        // Reduce the batteryLevel by the appropriate amount
+        RentEvtol.batteryLevel -= batteryLevelReduction;
+
+        if (RentEvtol.batteryLevel < 25)
+          return res
+            .status(400)
+            .json({ msg: "eVTOL battery level is too low" });
+
+        let totalWeight = 0;
+        medications.forEach((medication) => {
+          totalWeight += medication.weight;
+        });
+
+        if (totalWeight > RentEvtol.weightLimit)
+          return res
+            .status(400)
+            .json({ msg: "Total weight exceeds the eVTOL weight limit" });
+
+        RentEvtol.state = "LOADING";
+        RentEvtol.medications = medications;
+        RentEvtol.save().then((updatedeVTOL) =>
+          res.json({
+            status: "Success",
+            updatedeVTOL,
+          })
+        );
+      }
+    );
   } catch (error) {
     res.status(400).json({
       message: "Unable to Load Evtol",
@@ -78,8 +93,11 @@ export const registerEvtol = async (req, res) => {
       year: req.body.year,
       color: req.body.color,
       weightLimit: req.body.weightLimit,
-      batteryCapacity: req.body.batteryCapacity,
-      rent: req.body.rent,
+      batteryLevel: req.body.batteryLevel,
+      medications: req.body.medications,
+      // medications: req.body.code,
+      // medications: req.body.destination,
+      state: req.body.state,
       fileName: req.file.originalname,
       filePath: req.file.path,
       fileType: req.file.mimetype,
@@ -93,7 +111,7 @@ export const registerEvtol = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      message: "Unable to uploaded Evtol",
+      message: "Unable to upload Evtol",
       error: error.message,
     });
   }

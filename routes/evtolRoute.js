@@ -47,6 +47,11 @@ router.post("/evtol/load", loadEvtol);
 
 // DASBOARD ROUTES
 router.post("/addrentevtols", imageUpload.single("myrentfile"), registerEvtol);
+router.post(
+  "/loadevtols/:serialNumber",
+  imageUpload.single("image"),
+  loadEvtol
+);
 router.get("/displayAllEvtol", displayAlladdedEvtol);
 router.get("/getAvailableRentEvtol", isLogin, getallRentEvtol);
 router.get("/getRentEvtolData", isLogin, getRentData);

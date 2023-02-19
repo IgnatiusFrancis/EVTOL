@@ -90,3 +90,13 @@ export const signinAdmin = async (req, res) => {
     });
   }
 };
+
+export const dashboard = async (req, res) => {
+  try {
+    res.status(200).json({
+      message: "Success",
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
