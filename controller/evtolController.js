@@ -1,16 +1,14 @@
 import RentEvtol from "../model/addEvtolSchema.js";
+import LoadedEvtolModel from "../model/LoadedEvtolSchema.js";
 
 export const loadEvtol = async (req, res) => {
   try {
-    const { medications } = req.body;
-    console.log(medications);
-
     RentEvtol.findOne({ serialNumber: req.params.serialNumber }).then(
       (RentEvtol) => {
         if (!RentEvtol) return res.status(400).json({ msg: "eVTOL not found" });
 
         if (RentEvtol.state === "LOADING")
-          return res.status(400).json({ msg: "eVTOL is already loading" });
+          return res.status(400).json({ msg: "eVTOL is already loaded" });
 
         const numMedications = medications.length;
 
@@ -37,6 +35,9 @@ export const loadEvtol = async (req, res) => {
             .json({ msg: "Total weight exceeds the eVTOL weight limit" });
 
         RentEvtol.state = "LOADING";
+
+        LoadedEvtolModel.serialNumber = req.body.serialNumber;
+        LoadedEvtolModel.medications = medications;
         RentEvtol.medications = medications;
         RentEvtol.save().then((updatedeVTOL) =>
           res.json({

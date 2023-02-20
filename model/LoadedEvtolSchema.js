@@ -1,4 +1,5 @@
-import Evtol from "../model/addEvtolSchema.js";
+import RentEvtol from "../model/addEvtolSchema.js";
+import mongoose from "mongoose";
 
 const LoadedEvtolSchema = new mongoose.Schema({
   serialNumber: {
@@ -25,12 +26,17 @@ const LoadedEvtolSchema = new mongoose.Schema({
   },
 });
 
-LoadedEvtolSchema.virtual("manufacturer").get(function () {
-  return this.evtol.manufacturer;
+LoadedEvtolSchema.virtual("brand").get(function () {
+  return this.evtol.brand;
 });
 
-LoadedEvtolSchema.virtual("batteryLevel").get(function () {
-  return this.evtol.batteryLevel;
+LoadedEvtolSchema.virtual("model").get(function () {
+  return this.evtol.model;
+});
+
+LoadedEvtolSchema.virtual("state").get(function () {
+  return this.evtol.state;
 });
 
 const LoadedEvtolModel = mongoose.model("LoadedEvtol", LoadedEvtolSchema);
+export default LoadedEvtolModel;
