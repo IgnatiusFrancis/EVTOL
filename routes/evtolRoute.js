@@ -9,6 +9,7 @@ import {
   getallRentEvtol,
   getRentData,
   searchEvtol,
+  displayAlladdedEvtolMedicine,
 } from "../controller/evtolController.js";
 
 import { isLogin } from "../middleware/isLogin.js";
@@ -43,7 +44,7 @@ const router = express.Router();
 
 // EVTOL ROUTES
 router.post("/evtol/register", registerEvtol);
-router.post("/evtol/load", loadEvtol);
+// router.post("/evtol/load", loadEvtol);
 
 // DASBOARD ROUTES
 router.post("/addrentevtols", imageUpload.single("myrentfile"), registerEvtol);
@@ -56,4 +57,5 @@ router.get("/displayAllEvtol", displayAlladdedEvtol);
 router.get("/getAvailableRentEvtol", isLogin, getallRentEvtol);
 router.get("/getRentEvtolData", isLogin, getRentData);
 router.get("/searchRentEvtol", searchEvtol);
+router.get("/loadedMed", displayAlladdedEvtolMedicine);
 export default router;

@@ -86,6 +86,21 @@ export const displayAlladdedEvtol = async (req, res) => {
   }
 };
 
+export const displayAlladdedEvtolMedicine = async (req, res) => {
+  try {
+    const addEvtolMed = await LoadedEvtolModel.find();
+    res.status(200).json({
+      status: "success",
+      addEvtolMed,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: "Unable to display Loaded Evtol",
+      error: error.message,
+    });
+  }
+};
+
 export const registerEvtol = async (req, res) => {
   try {
     const data = new RentEvtol({
